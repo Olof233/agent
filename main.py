@@ -7,7 +7,8 @@ client = OpenAI(
     api_key='ollama',
 )
 
-messages=[
+messages = []
+init_messages=[
         {
             'role': 'user',
             'content': 'Say this is a test',
@@ -15,6 +16,6 @@ messages=[
     ]
 
 chat_completion = client.chat.completions.create(
-    messages=messages, # type: ignore
+    messages=init_messages, # type: ignore
     model="qwen3:0.6b",
 )
