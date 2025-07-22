@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 import faiss
-from utils import get_pdf_text, process_file, group_lines
+from utils import get_pdf_text, process_file, group_lines, bert_chunk
 
 class Retrieval():
     def __init__(self,
@@ -16,7 +16,10 @@ class Retrieval():
                         "type": "integer",
                         "description": "number of reference sentences returned",
                         "required": False
-                    }}):
+                    }},
+                chunk=False    
+                ):
+        self.chunk = chunk
         self.model = SentenceTransformer('m3e-small')
         self.name = name
         self.description = description
@@ -26,9 +29,10 @@ class Retrieval():
 
     def create_kb(self):
         path = 'H3C.pdf'
-        lines = group_lines(process_file(get_pdf_text(path)))
-        self.kb_data = lines
-        self.create_vector_index(lines, path.split('.')[0])
+        lines = process_file(get_pdf_text(path))
+        content = bert_chunk(lines) if self.chunk else group_lines(lines)
+        self.kb_data = content
+        self.create_vector_index(content, path.split('.')[0])
 
 
     def create_vector_index(self, list, filename):
@@ -62,7 +66,7 @@ class Retrieval():
         for d, i in zip(D[0], I[0]):
             results.append({
                 "id": i,
-                "content": self.kb_data[i],
+                "content": self.kb_data[i], # type: ignore
                 "relevance": d
             })
         

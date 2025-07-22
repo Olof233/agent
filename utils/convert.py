@@ -1,5 +1,8 @@
 from PyPDF2 import PdfReader
 import re
+from modelscope.utils.constant import Tasks
+from modelscope.outputs import OutputKeys
+from modelscope.pipelines import pipeline
 
 
 def get_pdf_text(pdf):
@@ -31,3 +34,12 @@ def group_lines(lines, group_size=20):
         group = ' '.join(lines[i:i+group_size])
         grouped.append(group)
     return grouped
+
+
+def bert_chunk(lines):
+    p = pipeline(
+    task=Tasks.document_segmentation,
+    model='bert', model_revision='master')
+
+    result = p(lines)
+    return result[OutputKeys.TEXT] #type: ignore

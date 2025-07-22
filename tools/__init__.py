@@ -4,7 +4,7 @@ import json
 
 def get_tools():
     return {
-        'Retrieval': Retrieval(),
+        'Retrieval': Retrieval(chunk=True),
         }
         
 def remove_required_from_properties(tool_definitions):
