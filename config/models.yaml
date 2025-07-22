@@ -1,0 +1,18 @@
+models:
+  # - provider: ollama
+  #   base_url: "http://localhost:11434/v1/"
+  #   name: qwen2:0.5b
+  #   api_key: "ollama"
+  #   temperature: 0.7
+  #   max_tokens: 2048
+  #   parameters:
+  #     seed: 42
+
+  - provider: ollama
+    base_url: "http://localhost:11434/v1/"
+    name: qwen3:0.6b
+    api_key: "ollama"
+    temperature: 0.7
+    max_tokens: 2048
+    parameters:
+      seed: 42

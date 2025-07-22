@@ -1,21 +1,38 @@
-from openai import OpenAI
+import utils
+import models
+import tools
 
-client = OpenAI(
-    base_url='http://localhost:11434/v1/',
+path = "config/models.yaml"
 
-    # required but ignored
-    api_key='ollama',
-)
+def main(path):
 
-messages = []
-init_messages=[
-        {
-            'role': 'user',
-            'content': 'Say this is a test',
-        }
-    ]
+    #initialize settings
+    config = utils.read_yaml(path)
+    models_list = utils.load_models_from_config(config)
+    print(f"Loaded models: {models_list}") 
+    tool_definitions = tools.init_tools()
 
-chat_completion = client.chat.completions.create(
-    messages=init_messages, # type: ignore
-    model="qwen3:0.6b",
-)
+    #initialize conversation
+    conversations = []
+    messages={'role': 'user',
+            'content': '在你的知识库中查询，KylinOS 操作系统安装nvidia-container-runtime /no_think'}
+    conversations.append(messages)
+
+    #generate response 
+    for model in models_list:
+        response, result = model.generate_messages(conversations, tools=tool_definitions)
+        new_content = {
+            "role": "assistant",
+            "content": result.get("content", ""),
+            **({} if "tool_calls" not in result else {"tool_calls": result["tool_calls"]})}
+        conversations.append(new_content)        
+        print(response)
+        if "tool_calls" in result:
+            print(utils.process_tool_calls(result["tool_calls"], conversations))
+            response, result = model.generate_messages(messages=conversations)
+            print(f"Final Response:", response)
+
+
+
+if __name__ == "__main__":
+    main(path)
