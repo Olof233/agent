@@ -15,18 +15,19 @@ def get_pdf_text(pdf):
 
 
 def process_file(lines):
-    
     lines = [subline for line in lines for subline in line.replace('。', '。\n').split('\n')]
-    
     raw = '\n'.join(lines)
-    
     raw = re.sub(r'“([\S]+?)”', lambda m: m.group(0).replace('\n', ''), raw)
     raw = re.sub(r'“([\S\r\n]+?)”', lambda m: re.sub(r'[\r\n]', '', m.group(0)), raw)
-    
     lines = raw.split('\n')
-    
     lines = [re.sub(r's', '', line).strip().replace('s', '—') for line in lines]
-    
     lines = [line for line in lines if line]
-    
     return lines
+
+
+def group_lines(lines, group_size=20):
+    grouped = []
+    for i in range(0, len(lines), group_size):
+        group = ' '.join(lines[i:i+group_size])
+        grouped.append(group)
+    return grouped

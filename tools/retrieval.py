@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 import faiss
-from utils import get_pdf_text, process_file
+from utils import get_pdf_text, process_file, group_lines
 
 class Retrieval():
     def __init__(self,
@@ -26,7 +26,7 @@ class Retrieval():
 
     def create_kb(self):
         path = 'H3C.pdf'
-        lines = process_file(get_pdf_text(path))
+        lines = group_lines(process_file(get_pdf_text(path)))
         self.kb_data = lines
         self.create_vector_index(lines, path.split('.')[0])
 
@@ -57,7 +57,7 @@ class Retrieval():
         
         results = []
         index = faiss.read_index(self.index_path)
-        D, I = index.search(self.model.encode([query]), max_results + 10)
+        D, I = index.search(self.model.encode([query]), max_results + 5)
 
         for d, i in zip(D[0], I[0]):
             results.append({
