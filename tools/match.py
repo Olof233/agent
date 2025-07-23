@@ -19,7 +19,7 @@ class Match():
                         "type": "string",
                         "enum": ['company', 'rating', 'location',\
                                 'positionName', 'description', 'salary', 'jobType'],
-                        "description": "Categories of key word, jobTypeValue must be full-time or Contract",
+                        "description": "Categories of key word, 'full-time' and 'Contract' are the only two values of jobType",
                         "required": True
                     }
                 }
@@ -89,8 +89,9 @@ class Match():
 
         else:
             for item in self.kb_data:
-                if item[attr].lower() == parameters.get('key word').lower():
-                    results.append(item)
+                for words in item[attr].lower().split(' '):
+                    if words in parameters.get('key word').lower():
+                        results.append(item)
         return results
 
     
