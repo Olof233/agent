@@ -4,15 +4,15 @@ from typing import Optional
 class AzureClinet():
     def __init__(self,
                 model:str,
-                api_version: str,
                 temperature: float = 0.7,
                 max_tokens: int = 1024,
-                azure_endpoint: Optional[str] = None,
+                api_version: Optional[str] = None,
+                endpoint: Optional[str] = None,
                 api_key: Optional[str] = None,
                 **kwargs):
         
         self.api_version = api_version
-        self.azure_endpoint = azure_endpoint
+        self.azure_endpoint = endpoint
         self.api_key = api_key
         self.model = model
         self.temperature = temperature
@@ -44,4 +44,18 @@ class AzureClinet():
         
         message = response.choices[0].message
         result = {"content": message.content or ""}
+
+        if hasattr(message, "tool_calls") and message.tool_calls:
+            result["tool_calls"] = [
+                {
+                    "id": tool_call.id,
+                    "type": "function",
+                    "function": {
+                        "name": tool_call.function.name,
+                        "arguments": tool_call.function.arguments
+                    }
+                }
+                for tool_call in message.tool_calls
+            ]
+
         return response, result

@@ -12,14 +12,14 @@ class Match():
                 parameters={
                     "key word": {
                         "type": "string",
-                        "description": "Query string",
+                        "description": "Query string of categories",
                         "required": True
                     },
                     "categories": {
                         "type": "string",
                         "enum": ['company', 'rating', 'location',\
                                 'positionName', 'description', 'salary', 'jobType'],
-                        "description": "Categories of key word, 'full-time' and 'Contract' are the only two values of jobType",
+                        "description": "Categories of key word, 'full-time' and 'Contract' are the only two values of jobType, rating must be numerical",
                         "required": True
                     }
                 }
