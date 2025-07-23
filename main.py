@@ -2,10 +2,11 @@ import utils
 import models
 import tools
 
+
 path = "config/models.yaml"
 
-def main(path):
 
+def main(path):
     #initialize settings
     config = utils.read_yaml(path)
     models_list = utils.load_models_from_config(config)
@@ -14,9 +15,13 @@ def main(path):
 
     #initialize conversation
     conversations = []
+    promt={'role': 'system',
+            'content': '你现在是一个智能助理，用户询问的问题判断是否有可用的工具，生成query时在中英文版本各生成一段'}
     messages={'role': 'user',
-            'content': '在你的知识库中查询，KylinOS 操作系统安装nvidia-container-runtime /no_think'}
+            'content': 'Is there any job from google? Use match tool. /no_think'}
+    conversations.append(promt)
     conversations.append(messages)
+
 
     #generate response 
     for model in models_list:

@@ -6,6 +6,9 @@ Embedding Model: M3E
 
 bert Model: iic/nlp_bert_document-segmentation_chinese-base
 
+
+
+
 ```
 agent
 ├─ 📁.vscode
@@ -26,6 +29,20 @@ agent
 ├─ 📁config
 │  ├─ 📄models.yaml
 │  └─ 📄__init__.py
+├─ 📁example_data
+│  ├─ 📁interview
+│  │  ├─ 📄1. Machine Learning Interview Questions
+│  │  ├─ 📄2. Deep Learning Interview Questions
+│  │  ├─ 📄5. Behavioral_HR Interview Questions.pdf
+│  │  ├─ 📄A to Z Python Cheatsheet.html
+│  │  ├─ 📄Data_Science_Resume_Checklist_Data_Interview_Pro.pdf
+│  │  ├─ 📄deeplearning_questions.csv
+│  │  ├─ 📄LICENSE
+│  │  └─ 📄README.md
+│  ├─ 📁jobs
+│  │  ├─ 📄jobs_dataset.csv
+│  │  └─ 📄jobs_dataset.json
+│  └─ 📄H3C.pdf
 ├─ 📁index
 │  └─ 📄H3C.index
 ├─ 📁m3e-small
@@ -50,23 +67,28 @@ agent
 │  └─ 📄__init__.py
 ├─ 📁tools
 │  ├─ 📁__pycache__
+│  │  ├─ 📄match.cpython-310.pyc
 │  │  ├─ 📄retrieval.cpython-310.pyc
 │  │  └─ 📄__init__.cpython-310.pyc
+│  ├─ 📄match.py
 │  ├─ 📄retrieval.py
 │  └─ 📄__init__.py
 ├─ 📁utils
 │  ├─ 📁__pycache__
 │  │  ├─ 📄build_client.cpython-310.pyc
 │  │  ├─ 📄convert.cpython-310.pyc
+│  │  ├─ 📄json_process.cpython-310.pyc
+│  │  ├─ 📄pdf_preocess.cpython-310.pyc
+│  │  ├─ 📄pdf_process.cpython-310.pyc
 │  │  ├─ 📄toolscalls_process.cpython-310.pyc
 │  │  └─ 📄__init__.cpython-310.pyc
 │  ├─ 📄build_client.py
-│  ├─ 📄convert.py
+│  ├─ 📄json_process.py
+│  ├─ 📄pdf_process.py
 │  ├─ 📄toolscalls_process.py
 │  └─ 📄__init__.py
 ├─ 📄.gitignore
 ├─ 📄env.yml
-├─ 📄H3C.pdf
 ├─ 📄main.py
 ├─ 📄readme.md
 └─ 📄test.ipynb
