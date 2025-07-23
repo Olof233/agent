@@ -31,26 +31,22 @@ class Match():
 
 
     def create_jsonkb(self):
-        path = 'example_data/jobs/jobs_dataset.json'
+        path = 'example_data/jobs/data.json'
         content = read_json(path)
         self.kb_data = content
         filename = path.split('/')[-1].split('.')[0]
         self.positionName_path = "index/" + filename + "_positionName.index"
         self.description_path = "index/" + filename + "_description.index"
-        if not os.path.isfile("index/" + filename + "_positionName.index"):
+        if not os.path.isfile(self.positionName_path):
             positionNames = []
-            for item in content:
+            for item in self.kb_data:
                 positionNames.append(item['positionName'])
             self.create_vector_index(positionNames, path)
-        else:
-            self.index_path = "index/" + filename + "_positionName.index"
-        if not os.path.isfile("index/" + filename + "_description.index"):
+        if not os.path.isfile(self.description_path):
             descriptions = []
-            for item in content:
+            for item in self.kb_data:
                 descriptions.append(item['description'])
             self.create_vector_index(content, path)
-        else:
-            self.index_path = "index/" + filename + "_description.index"
 
 
     def create_vector_index(self, list, path):
@@ -59,12 +55,6 @@ class Match():
         index = faiss.IndexFlatL2(dimension)
         index.add(sentence_embeddings) # type: ignore
         faiss.write_index(index, path)
-
-
-    def search(self, query, topK=None):
-        index = faiss.read_index(self.index_path)
-        D, I = index.search(self.model.encode(query), topK if topK else 5)
-        return I
     
 
     def _execute(self, parameters):
@@ -81,7 +71,8 @@ class Match():
         self.create_jsonkb()
         attr = parameters.get('categories')
         if attr in SPECIAL_LIST:
-            index = faiss.read_index(self.index_path)
+            path = self.description_path if attr.lower() == 'description' else self.positionName_path
+            index = faiss.read_index(path)
             D, I = index.search(self.model.encode([query]), max_results + 2)
 
             for d, i in zip(D[0], I[0]):
