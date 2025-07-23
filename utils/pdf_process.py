@@ -28,7 +28,7 @@ def process_file(lines):
     return lines
 
 
-def group_lines(lines, group_size=20):
+def group_lines(lines, group_size=30):
     grouped = []
     for i in range(0, len(lines), group_size):
         group = ' '.join(lines[i:i+group_size])

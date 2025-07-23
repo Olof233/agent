@@ -2,6 +2,7 @@ from sentence_transformers import SentenceTransformer
 import faiss
 from utils import get_pdf_text, process_file, group_lines, bert_chunk, read_json
 import os
+import numpy as np
 
 class Retrieval():
     def __init__(self,
@@ -29,7 +30,7 @@ class Retrieval():
 
 
     def create_pdfkb(self):
-        path = 'example_data/H3C.pdf'
+        path = 'example_data/repair.pdf'
         lines = process_file(get_pdf_text(path))
         content = bert_chunk(lines) if self.chunk else group_lines(lines)
         self.kb_data = content
@@ -42,8 +43,10 @@ class Retrieval():
 
     def create_vector_index(self, list, filename):
         sentence_embeddings = self.model.encode(list)
+        faiss.normalize_L2(sentence_embeddings)
         dimension = sentence_embeddings.shape[1]
-        index = faiss.IndexFlatL2(dimension)
+        quantizer = faiss.IndexFlatIP(dimension)
+        index = quantizer
         index.add(sentence_embeddings) # type: ignore
         self.index_path = "index/" + filename + ".index"
         faiss.write_index(index, self.index_path)
@@ -68,6 +71,14 @@ class Retrieval():
 
         index = faiss.read_index(self.index_path)
         D, I = index.search(self.model.encode([query]), max_results + 2)
+
+        for item in self.kb_data:
+            if query in item:
+                results.append({
+                    "content": item,
+                    "relevance": 1
+                })
+
 
         for d, i in zip(D[0], I[0]):
             results.append({
