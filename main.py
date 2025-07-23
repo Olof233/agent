@@ -18,7 +18,7 @@ def main(path):
     promt={'role': 'system',
             'content': '你现在是一个智能助理，用户询问的问题判断是否有可用的工具，生成query时在中英文版本各生成一段'}
     messages={'role': 'user',
-            'content': 'Is there any job from google? Use match tool. /no_think'}
+            'content': 'Is there any full-time job? Use match tool. /no_think'}
     conversations.append(promt)
     conversations.append(messages)
 
