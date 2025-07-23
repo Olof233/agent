@@ -7,8 +7,6 @@ Embedding Model: M3E
 bert Model: iic/nlp_bert_document-segmentation_chinese-base
 
 
-
-
 ```
 agent
 ├─ 📁.vscode
@@ -40,11 +38,16 @@ agent
 │  │  ├─ 📄LICENSE
 │  │  └─ 📄README.md
 │  ├─ 📁jobs
+│  │  ├─ 📄data.json
 │  │  ├─ 📄jobs_dataset.csv
 │  │  └─ 📄jobs_dataset.json
-│  └─ 📄H3C.pdf
+│  ├─ 📄H3C.pdf
+│  └─ 📄repair.pdf
 ├─ 📁index
-│  └─ 📄H3C.index
+│  ├─ 📄data_description.index
+│  ├─ 📄data_positionName.index
+│  ├─ 📄H3C.index
+│  └─ 📄repair.index
 ├─ 📁m3e-small
 │  ├─ 📁1_Pooling
 │  │  └─ 📄config.json
