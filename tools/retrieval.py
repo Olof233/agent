@@ -24,6 +24,7 @@ class Retrieval():
         self.description = description
         self.parameters = parameters
         self.model = SentenceTransformer('m3e-small')
+        self.create_pdfkb()
 
 
 
@@ -65,7 +66,6 @@ class Retrieval():
         
         results = []
 
-        self.create_pdfkb()
         index = faiss.read_index(self.index_path)
         D, I = index.search(self.model.encode([query]), max_results + 2)
 

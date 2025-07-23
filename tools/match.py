@@ -28,12 +28,13 @@ class Match():
         self.name = name
         self.description = description
         self.parameters = parameters
+        self.create_jsonkb()
+
 
 
     def create_jsonkb(self):
         path = 'example_data/jobs/data.json'
-        content = read_json(path)
-        self.kb_data = content
+        self.kb_data = read_json(path)
         filename = path.split('/')[-1].split('.')[0]
         self.positionName_path = "index/" + filename + "_positionName.index"
         self.description_path = "index/" + filename + "_description.index"
@@ -41,12 +42,12 @@ class Match():
             positionNames = []
             for item in self.kb_data:
                 positionNames.append(item['positionName'])
-            self.create_vector_index(positionNames, path)
+            self.create_vector_index(positionNames, self.positionName_path)
         if not os.path.isfile(self.description_path):
             descriptions = []
             for item in self.kb_data:
                 descriptions.append(item['description'])
-            self.create_vector_index(content, path)
+            self.create_vector_index(descriptions, self.description_path)
 
 
     def create_vector_index(self, list, path):
@@ -68,7 +69,6 @@ class Match():
         
         results = []
 
-        self.create_jsonkb()
         attr = parameters.get('categories')
         if attr in SPECIAL_LIST:
             path = self.description_path if attr.lower() == 'description' else self.positionName_path
