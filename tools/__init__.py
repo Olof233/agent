@@ -1,6 +1,6 @@
 import copy
-from .retrieval import Retrieval
-from .match import Match
+from .pdf_retrieval import Retrieval
+from .jobs_match import Match
 import json
 import copy
 

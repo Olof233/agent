@@ -16,9 +16,9 @@ def main(path):
     #initialize conversation
     conversations = []
     promt={'role': 'system',
-            'content': '你现在是一个智能助理，用户询问的问题判断是否有可用的工具，生成query时在中英文版本各生成一段'}
+            'content': '你现在是一个智能助理，用户询问的问题判断是否有可用的工具，对出现矛盾的结果将工具结果返回给用户'}
     messages={'role': 'user',
-            'content': '开机后，指示灯不亮，弧焊电源不工作. Use function retrieval.'}
+            'content': '怎么进行维护和保养. Use function retrieval.'}
     conversations.append(promt)
     conversations.append(messages)
 
