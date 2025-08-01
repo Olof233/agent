@@ -1,0 +1,11 @@
+question,answer,score
+What is machine learning?,Machine learning is a subset of AI that enables computers to learn and improve from experience without being explicitly programmed.,9.5
+How does neural network work?,Neural networks are computing systems inspired by biological neurons that process information through interconnected nodes.,9.2
+What is the difference between supervised and unsupervised learning?,"Supervised learning uses labeled data for training, while unsupervised learning finds patterns in unlabeled data.",8.8
+Explain backpropagation algorithm,Backpropagation is an algorithm that calculates gradients of the loss function with respect to network weights.,9.0
+What are activation functions in neural networks?,"Activation functions introduce non-linearity into neural networks, enabling them to learn complex patterns.",8.5
+How to prevent overfitting in machine learning?,"Overfitting can be prevented through regularization, cross-validation, and using more training data.",8.7
+What is deep learning?,Deep learning uses multiple layers of neural networks to learn hierarchical representations of data.,9.3
+Explain gradient descent optimization,Gradient descent is an optimization algorithm that minimizes loss by updating parameters in the direction of steepest descent.,8.9
+What is the role of bias in neural networks?,"Bias terms allow neural networks to shift the activation function, improving model flexibility.",8.3
+How does convolutional neural network work?,CNNs use convolutional layers to automatically learn spatial hierarchies of features from input data.,9.1
