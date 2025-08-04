@@ -24,7 +24,7 @@ class Retrieval():
         self.name = name
         self.description = description
         self.parameters = parameters
-        self.model = SentenceTransformer('m3e-small')
+        self.model = SentenceTransformer('moka-ai/m3e-small')
         self.create_pdfkb()
 
 

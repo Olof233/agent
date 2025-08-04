@@ -12,7 +12,7 @@ class QA_RAG:
     Stores questions as vectors and retrieves corresponding Q&A pairs
     """
     
-    def __init__(self, model_name: str = 'm3e-small', index_dir: str = 'index'):
+    def __init__(self, model_name: str = 'moka-ai/m3e-small', index_dir: str = 'index'):
         self.vector_store = VectorStore(model_name=model_name, index_dir=index_dir)
         self.vector_search = VectorSearch(model_name=model_name, index_dir=index_dir)
         self.qa_pairs = []  # Store (Q, A, S) tuples
@@ -329,7 +329,7 @@ def create_qa_dataset_from_csv(csv_path: str,
                               answer_column: str = 'answer',
                               score_column: str = 'score',
                               index_name: Optional[str] = None,
-                              model_name: str = 'm3e-small') -> QA_RAG:
+                              model_name: str = 'moka-ai/m3e-small') -> QA_RAG:
     """
     Convenience function to create a QA_RAG system from CSV
     

@@ -13,7 +13,7 @@ class VectorStore:
     Handles vector storage operations: building, updating, and managing indices
     """
     
-    def __init__(self, model_name: str = 'm3e-small', index_dir: str = 'index'):
+    def __init__(self, model_name: str = 'moka-ai/m3e-small', index_dir: str = 'index'):
         self.model = self._load_model_safely(model_name)
         self.index_dir = index_dir
         self.kb_data = []

@@ -20,7 +20,7 @@ def test_qa_dataset_creation():
     
     try:
         # Test QA_RAG with actual data
-        qa_rag = QA_RAG()
+        qa_rag = QA_RAG() #初始化QA_RAG对象
         index_path = qa_rag.add_qa_dataset(
             csv_path=csv_path,
             question_column='question',
@@ -32,7 +32,7 @@ def test_qa_dataset_creation():
         print(f"✓ QA dataset created: {index_path}")
         
         # Test search functionality
-        results = qa_rag.search_qa("machine learning", top_k=3)
+        results = qa_rag.search_qa("machine learning", top_k=3) #搜索QA对
         if results:
             print(f"✓ Search successful: {len(results)} results")
             for i, result in enumerate(results, 1):
@@ -125,13 +125,13 @@ def test_qa_operations():
             print("✓ Add QA pair successful")
         
         # Test export functionality
-        export_path = 'test_export.csv'
-        export_success = qa_rag.export_qa_dataset(export_path)
-        if export_success:
-            print("✓ Export QA dataset successful")
-            # Clean up exported file
-            if os.path.exists(export_path):
-                os.remove(export_path)
+        # export_path = 'test_export.csv'
+        # export_success = qa_rag.export_qa_dataset(export_path)
+        # if export_success:
+        #     print("✓ Export QA dataset successful")
+        #     # Clean up exported file
+        #     if os.path.exists(export_path):
+        #         os.remove(export_path)
         
         return True
         

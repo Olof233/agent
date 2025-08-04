@@ -9,7 +9,7 @@ def process_csv_for_rag(csv_path: str,
                        text_column: str,
                        index_name: Optional[str] = None,
                        additional_columns: Optional[List[str]] = None,
-                       model_name: str = 'm3e-small') -> VectorSearch:
+                       model_name: str = 'moka-ai/m3e-small') -> VectorSearch:
     """
     Convenience function to process a CSV file and create a RAG system
     
@@ -64,7 +64,7 @@ def update_existing_rag_with_csv(vector_search: VectorSearch,
         Updated VectorSearch instance
     """
     # Initialize vector store for updating
-    vector_store = VectorStore(model_name='m3e-small')  # Use same model
+    vector_store = VectorStore(model_name='moka-ai/m3e-small')  # Use same model
     
     # Update the vector store
     vector_store.upsert_csv_to_vector_store(
@@ -81,7 +81,7 @@ def update_existing_rag_with_csv(vector_search: VectorSearch,
 
 
 def batch_process_csv_files(csv_files: List[Dict[str, Any]], 
-                           model_name: str = 'm3e-small') -> Dict[str, VectorSearch]:
+                           model_name: str = 'moka-ai/m3e-small') -> Dict[str, VectorSearch]:
     """
     Process multiple CSV files and create separate RAG systems for each
     
