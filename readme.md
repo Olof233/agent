@@ -7,7 +7,6 @@ Embedding Model: M3E
 bert Model: iic/nlp_bert_document-segmentation_chinese-base
 
 
-
 ```
 agent
 ├─ 📁.vscode
@@ -42,6 +41,7 @@ agent
 │  │  ├─ 📄data.json
 │  │  ├─ 📄jobs_dataset.csv
 │  │  └─ 📄jobs_dataset.json
+│  ├─ 📄2025年期货行业分析.pdf
 │  ├─ 📄H3C.pdf
 │  ├─ 📄qa_test.json
 │  ├─ 📄repair.pdf

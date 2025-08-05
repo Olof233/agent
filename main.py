@@ -5,6 +5,8 @@ from flask import Flask, request, render_template, jsonify
 import uuid
 import threading
 import json
+import io
+import pdfplumber
 
 
 app = Flask(__name__)
@@ -57,32 +59,32 @@ def main(content):
             "schema": {
                 "type": "object",
                 "properties": {
-                    "dimension": {
+                    "dimensions": {
                         "type": "array",
                         "items": {
                             "type": "object",
                             "properties": {
-                                "Rating": {
+                                "评分": {
                                     "type": "number",
                                     "description": "from 0 to 10"
                                 },
-                                "Justification": {
+                                "分析": {
                                     "type": "string",
                                     "description": "Brief summary referencing toolcall results"
                                 },
-                                "Suggestions for Improvement": {
+                                "提升建议": {
                                     "type": "string",
-                                    "description": "Provide actionable suggestions if rating is below 8; otherwise state 'None required.'"
+                                    "description": "Provide actionable suggestions if rating is below 8; otherwise state 'Not required.'"
                                 }
                             },
-                            "required": ["Rating", "Justification", "Suggestions for Improvement"],
+                            "required": ["评分", "分析", "提升建议"],
                             "additionalProperties": False
                         }
 
                     },
                     "summary": {"type": "string"}
                 },
-                "required": ["dimension", "summary"],
+                "required": ["dimensions", "summary"],
                 "additionalProperties": False
             },
             "strict": True
@@ -92,7 +94,7 @@ def main(content):
     conversations.append(messages)
 
 
-    # print(conversations[-2:])
+    print(conversations[-2:])
     response, result = models_list[0].generate_messages(conversations[-2:], response_format=response_format)
 
     new_content = {
@@ -124,7 +126,22 @@ def background_process(task_id):
 def submit():
     task_id = str(uuid.uuid4())
     if 'file' in request.files:
-        content = request.files['file'].read().decode('utf-8')
+        file = request.files['file']
+        filetype = file.mimetype.split('/')[-1]
+        if filetype == "txt" or "csv" or "json" or "md" or "log":
+            content = file.read().decode('utf-8')
+        elif filetype == "pdf":
+            file_stream = io.BytesIO(file.read())
+            content = ''
+            with pdfplumber.open(file_stream) as pdf:
+                for i in range(len(pdf.pages)):
+                    page = pdf.pages[i]
+                    text = page.extract_text()
+                    if text:
+                        page_content = '\n'.join(text.split('\n')[:-1])
+                        content += page_content
+        else:
+            content = ''
     elif 'text' in request.form:
         content = request.form['text']
     else:
@@ -156,15 +173,15 @@ def result():
         resultlist = json.loads(task['result'])
         longtext = ""
         for i in range(6):
-            longtext += dim_list[i] + ': ' + str(resultlist['dimension'][i]) + '\n'
+            longtext += dim_list[i] + ': ' + str(resultlist['dimensions'][i]) + '\n'
         longtext += "summary: " + str(resultlist['summary']) + '\n'
         task['result'] = {
-            "langval": resultlist['dimension'][0]["Rating"],
-            "logicval": resultlist['dimension'][1]["Rating"],
-            "infoval": resultlist['dimension'][2]["Rating"],
-            "readval": resultlist['dimension'][3]["Rating"],
-            "safetyval": resultlist['dimension'][4]["Rating"],
-            "targetval": resultlist['dimension'][5]["Rating"],
+            "langval": resultlist['dimensions'][0]["评分"],
+            "logicval": resultlist['dimensions'][1]["评分"],
+            "infoval": resultlist['dimensions'][2]["评分"],
+            "readval": resultlist['dimensions'][3]["评分"],
+            "safetyval": resultlist['dimensions'][4]["评分"],
+            "targetval": resultlist['dimensions'][5]["评分"],
             "output_text": longtext,
         }
     return jsonify(task)
