@@ -25,12 +25,13 @@ class AzureClinet():
         
 
 
-    def generate_messages(self, messages, tools=None, debug=False):
+    def generate_messages(self, messages, response_format, tools=None, debug=False):
         params = {
                 "model": self.model,
                 "messages": messages,
                 "temperature": self.temperature,
                 "max_tokens": self.max_tokens,
+                "response_format": response_format,
                 **self.params
             }
         
