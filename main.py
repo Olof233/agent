@@ -27,25 +27,25 @@ def main(content):
 
             Dimensions for evaluation:
 
-            1. **Language Correction**:
+            1. **语言正确性**:
             Assess accuracy in spelling, grammar, punctuation, and sentence structure based on the provided toolcall feedback.
 
-            2. **Logical Structure**:
+            2. **逻辑结构**:
             Evaluate clarity, coherence, and logical flow of arguments as indicated by the toolcall insights.
 
-            3. **Information Value**:
+            3. **信息价值**:
             Determine the relevance, originality, and usefulness of the content, guided by toolcall indicators.
 
-            4. **Readability**:
+            4. **可读性**:
             Rate how easy, engaging, and audience-appropriate the content is, utilizing toolcall readability scores.
 
-            5. **Content Safety**:
+            5. **合规安全**:
             Confirm the absence of harmful, offensive, or misleading content according to toolcall alerts and provide a safety rating.
 
-            6. **Target Fit**:
+            6. **目标契合度**:
             Judge alignment with audience expectations and needs as suggested by toolcall assessments.
 
-            Make sure you provide your evaluations in the provided structured JSON format.
+            Make sure you provide your evaluations in the provided structured JSON format and response in Chinese.
 
             Ensure your assessment is comprehensive, balanced,  and clearly justified.'"""}
     messages={'role': 'user',
@@ -146,12 +146,12 @@ def result():
         return jsonify({'status': 'not_found', 'result': None})
     if task["status"] != 'pending':
         dim_list = [
-            "Language Correction",
-            "Logical Structure",
-            "Information Value",
-            "Readability",
-            "Content Safety",
-            "Target Fit"
+            "语言正确性",
+            "逻辑结构",
+            "信息价值",
+            "可读性",
+            "合规安全",
+            "目标契合度"
         ]
         resultlist = json.loads(task['result'])
         longtext = ""
