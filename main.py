@@ -125,21 +125,32 @@ def background_process(task_id):
 @app.route('/submit', methods=['POST'])
 def submit():
     task_id = str(uuid.uuid4())
+    print(request.files)
     if 'file' in request.files:
         file = request.files['file']
         filetype = file.mimetype.split('/')[-1]
-        if filetype == "txt" or "csv" or "json" or "md" or "log":
+        if filetype in ["txt", "csv", "json", "md", "log"]:
             content = file.read().decode('utf-8')
         elif filetype == "pdf":
             file_stream = io.BytesIO(file.read())
             content = ''
             with pdfplumber.open(file_stream) as pdf:
-                for i in range(len(pdf.pages)):
-                    page = pdf.pages[i]
-                    text = page.extract_text()
-                    if text:
-                        page_content = '\n'.join(text.split('\n')[:-1])
-                        content += page_content
+                for page in pdf.pages:
+                    tables = page.find_tables()
+                    table_bboxes = [table.bbox for table in tables]
+                    
+                    texts = page.extract_words()  # 每个词都有 bbox
+                    
+                    for word in texts:
+                        word_bbox = word['x0'], word['top'], word['x1'], word['bottom']
+                        # 判断是否在某个表格的 bbox 中
+                        in_table = any(
+                            word_bbox[0] >= bbox[0] and word_bbox[2] <= bbox[2] and
+                            word_bbox[1] >= bbox[1] and word_bbox[3] <= bbox[3]
+                            for bbox in table_bboxes
+                        )
+                        if not in_table:
+                            content += word['text']
         else:
             content = ''
     elif 'text' in request.form:
