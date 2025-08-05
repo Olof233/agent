@@ -7,6 +7,7 @@ Embedding Model: M3E
 bert Model: iic/nlp_bert_document-segmentation_chinese-base
 
 
+
 ```
 agent
 ├─ 📁.vscode
@@ -42,7 +43,10 @@ agent
 │  │  ├─ 📄jobs_dataset.csv
 │  │  └─ 📄jobs_dataset.json
 │  ├─ 📄H3C.pdf
-│  └─ 📄repair.pdf
+│  ├─ 📄qa_test.json
+│  ├─ 📄repair.pdf
+│  ├─ 📄sample_qa_dataset.csv
+│  └─ 📄updated_qa_dataset.csv
 ├─ 📁index
 │  ├─ 📄data_description.index
 │  ├─ 📄data_positionName.index
@@ -68,13 +72,17 @@ agent
 │  ├─ 📄auzre.py
 │  ├─ 📄ollama.py
 │  └─ 📄__init__.py
+├─ 📁templates
+│  └─ 📄ai_studio_code.html
 ├─ 📁tools
 │  ├─ 📁__pycache__
+│  │  ├─ 📄jobs_match.cpython-310.pyc
 │  │  ├─ 📄match.cpython-310.pyc
+│  │  ├─ 📄pdf_retrieval.cpython-310.pyc
 │  │  ├─ 📄retrieval.cpython-310.pyc
 │  │  └─ 📄__init__.cpython-310.pyc
-│  ├─ 📄match.py
-│  ├─ 📄retrieval.py
+│  ├─ 📄jobs_match.py
+│  ├─ 📄pdf_retrieval.py
 │  └─ 📄__init__.py
 ├─ 📁utils
 │  ├─ 📁__pycache__
@@ -83,16 +91,27 @@ agent
 │  │  ├─ 📄json_process.cpython-310.pyc
 │  │  ├─ 📄pdf_preocess.cpython-310.pyc
 │  │  ├─ 📄pdf_process.cpython-310.pyc
+│  │  ├─ 📄qa_rag.cpython-310.pyc
+│  │  ├─ 📄rag.cpython-310.pyc
 │  │  ├─ 📄toolscalls_process.cpython-310.pyc
+│  │  ├─ 📄vector_search.cpython-310.pyc
+│  │  ├─ 📄vector_store.cpython-310.pyc
 │  │  └─ 📄__init__.cpython-310.pyc
 │  ├─ 📄build_client.py
+│  ├─ 📄csv_utils.py
 │  ├─ 📄json_process.py
 │  ├─ 📄pdf_process.py
+│  ├─ 📄qa_rag.py
 │  ├─ 📄toolscalls_process.py
+│  ├─ 📄vector_search.py
+│  ├─ 📄vector_store.py
 │  └─ 📄__init__.py
 ├─ 📄.gitignore
+├─ 📄condaenv.sfno6v5n.requirements.txt
 ├─ 📄env.yml
 ├─ 📄main.py
+├─ 📄MIGRATION_GUIDE.md
 ├─ 📄readme.md
-└─ 📄test.ipynb
+├─ 📄test.ipynb
+└─ 📄test_qa_rag.py
 ```
