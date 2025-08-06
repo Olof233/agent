@@ -123,11 +123,12 @@ class VectorStore:
         # Create embeddings
         print(f"Creating embeddings for {len(valid_texts)} texts...")
         embeddings = self.model.encode(valid_texts, show_progress_bar=True)
-        faiss.normalize_L2(embeddings)
+        # 不再进行L2归一化，保留原始向量用于欧氏距离计算
+        # faiss.normalize_L2(embeddings)
         
-        # Create FAISS index
+        # Create FAISS index with L2 distance (Euclidean distance)
         dimension = embeddings.shape[1]
-        index = faiss.IndexFlatIP(dimension)
+        index = faiss.IndexFlatL2(dimension)  # 使用IndexFlatL2而不是IndexFlatIP
         index.add(embeddings)
         
         # Save index

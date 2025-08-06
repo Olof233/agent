@@ -111,28 +111,31 @@ class VectorSearch:
         Args:
             query: Search query
             top_k: Number of results to return
-            threshold: Minimum similarity threshold
+            threshold: Minimum similarity threshold (for Euclidean distance, smaller values mean more similar)
             
         Returns:
-            List of search results with content, metadata, and similarity scores
+            List of search results with content, metadata, and distance scores
         """
         if self.index is None:
             raise ValueError("No index loaded. Call load_index() first.")
         
         # Encode query
         query_embedding = self.model.encode([query])
-        faiss.normalize_L2(query_embedding)
+        # 不再进行L2归一化，保留原始向量用于欧氏距离计算
+        # faiss.normalize_L2(query_embedding)
         
-        # Search
-        similarities, indices = self.index.search(query_embedding, top_k)
+        # Search - for L2 distance, smaller values indicate higher similarity
+        distances, indices = self.index.search(query_embedding, top_k)
         
         # Format results
         results = []
-        for similarity, idx in zip(similarities[0], indices[0]):
-            if similarity >= threshold and idx < len(self.kb_data):
+        for distance, idx in zip(distances[0], indices[0]):
+            # For Euclidean distance, we consider the threshold differently
+            # (smaller distance means more similar)
+            if distance <= threshold and idx < len(self.kb_data):
                 result = {
                     "content": self.kb_data[idx],
-                    "similarity": float(similarity),
+                    "distance": float(distance),
                     "index": int(idx)
                 }
                 
@@ -144,7 +147,7 @@ class VectorSearch:
         
         return results
 
-    def search_with_metadata_filter(self, query: str, metadata_filter: Dict[str, Any], top_k: int = 5, threshold: float = 0.0) -> List[Dict[str, Any]]:
+    def search_with_metadata_filter(self, query: str, metadata_filter: Dict[str, Any], top_k: int = 5, threshold: float = float('inf')) -> List[Dict[str, Any]]:
         """
         Search with metadata filtering
         
@@ -152,7 +155,7 @@ class VectorSearch:
             query: Search query
             metadata_filter: Dictionary of metadata key-value pairs to filter by
             top_k: Number of results to return
-            threshold: Minimum similarity threshold
+            threshold: Maximum distance threshold (for Euclidean distance, smaller values mean more similar)
             
         Returns:
             List of filtered search results
@@ -177,14 +180,14 @@ class VectorSearch:
         
         return filtered_results
 
-    def batch_search(self, queries: List[str], top_k: int = 5, threshold: float = 0.0) -> Dict[str, List[Dict[str, Any]]]:
+    def batch_search(self, queries: List[str], top_k: int = 5, threshold: float = float('inf')) -> Dict[str, List[Dict[str, Any]]]:
         """
         Perform batch search on multiple queries
         
         Args:
             queries: List of search queries
             top_k: Number of results per query
-            threshold: Minimum similarity threshold
+            threshold: Maximum distance threshold (for Euclidean distance, smaller values mean more similar)
             
         Returns:
             Dictionary mapping queries to search results
@@ -203,22 +206,23 @@ class VectorSearch:
 
     def get_similarity_score(self, text1: str, text2: str) -> float:
         """
-        Calculate similarity score between two texts
+        Calculate Euclidean distance between two texts
         
         Args:
             text1: First text
             text2: Second text
             
         Returns:
-            Similarity score between 0 and 1
+            Euclidean distance between texts (smaller values indicate higher similarity)
         """
         # Encode both texts
         embeddings = self.model.encode([text1, text2])
-        faiss.normalize_L2(embeddings)
+        # 不再进行L2归一化，保留原始向量用于欧氏距离计算
+        # faiss.normalize_L2(embeddings)
         
-        # Calculate cosine similarity
-        similarity = np.dot(embeddings[0], embeddings[1])
-        return float(similarity)
+        # Calculate Euclidean distance
+        distance = np.linalg.norm(embeddings[0] - embeddings[1])
+        return float(distance)
 
     def get_index_statistics(self) -> Dict[str, Any]:
         """
