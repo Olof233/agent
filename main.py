@@ -14,88 +14,40 @@ task_store = {}
 contents = {}
 path = "config/models.yaml"
 config = utils.read_yaml(path)
-models_list = utils.load_models_from_config(config)
+model = utils.load_models_from_config(config)[0]
 # tool_definitions = tools.init_tools()
 
-
-def main(content):
+def eva(content):
     conversations = []
     prompt={'role': 'system',
-            'content': """'Evaluate the provided report or content, rating each of the following six dimensions on a scale from **0 to 10**. For each dimension, provide: 
-
-            * **A numerical rating** (0–10).
-            * **Brief justification** based directly on the toolcall results.
-            * **Suggestions for improvement** (if rating is below 8).
-
-            Dimensions for evaluation:
-
-            1. **语言正确性**:
-            Assess accuracy in spelling, grammar, punctuation, and sentence structure based on the provided toolcall feedback.
-
-            2. **逻辑结构**:
-            Evaluate clarity, coherence, and logical flow of arguments as indicated by the toolcall insights.
-
-            3. **信息价值**:
-            Determine the relevance, originality, and usefulness of the content, guided by toolcall indicators.
-
-            4. **可读性**:
-            Rate how easy, engaging, and audience-appropriate the content is, utilizing toolcall readability scores.
-
-            5. **合规安全**:
-            Confirm the absence of harmful, offensive, or misleading content according to toolcall alerts and provide a safety rating.
-
-            6. **目标契合度**:
-            Judge alignment with audience expectations and needs as suggested by toolcall assessments.
-
-            Make sure you provide your evaluations in the provided structured JSON format and response in Chinese.
-
-            Ensure your assessment is comprehensive, balanced,  and clearly justified.'"""}
+            'content': utils.prompt.eva_prompt}
     messages={'role': 'user',
             'content': content}
-    response_format = {
-        "type": "json_schema",
-        "json_schema": {
-            "name": "evaluate_response",
-            "schema": {
-                "type": "object",
-                "properties": {
-                    "dimensions": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "评分": {
-                                    "type": "number",
-                                    "description": "from 0 to 10"
-                                },
-                                "分析": {
-                                    "type": "string",
-                                    "description": "Brief summary referencing toolcall results"
-                                },
-                                "提升建议": {
-                                    "type": "string",
-                                    "description": "Provide actionable suggestions if rating is below 8; otherwise state 'Not required.'"
-                                }
-                            },
-                            "required": ["评分", "分析", "提升建议"],
-                            "additionalProperties": False
-                        }
-
-                    },
-                    "summary": {"type": "string"}
-                },
-                "required": ["dimensions", "summary"],
-                "additionalProperties": False
-            },
-            "strict": True
-        }
-    }
     conversations.append(prompt)
     conversations.append(messages)
 
 
     print(conversations[-2:])
-    response, result = models_list[0].generate_messages(conversations[-2:], response_format=response_format)
+    response, result = model.generate_messages(conversations[-2:], response_format=utils.format.eva_format)
+
+    new_content = {
+        "role": "assistant",
+        "content": result.get("content", "None")}
+    conversations.append(new_content)
+    return new_content['content']
+
+def gen(content):
+    conversations = []
+    prompt={'role': 'system',
+            'content': utils.prompt.gen_prompt}
+    messages={'role': 'user',
+            'content': content}
+    conversations.append(prompt)
+    conversations.append(messages)
+
+
+    print(conversations[-2:])
+    response, result = model.generate_messages(conversations[-2:], response_format=utils.format.gen_format)
 
     new_content = {
         "role": "assistant",
@@ -118,7 +70,7 @@ def get_content(i):
 
 
 def background_process(task_id):
-    task_store[task_id] = {'status': 'done', 'result': main(get_content(task_id))}
+    task_store[task_id] = {'status': 'done', 'result': eva(get_content(task_id))}
     return task_store[task_id]
 
 
