@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Report Evaluator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+  }
+  .container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 95%;
+    max-width: 1400px;
+    display: flex;
+    gap: 40px;
+  }
+  .input-section, .output-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+  h2 {
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+  }
+  .input-area {
+    border: 1px solid #ccc;
+    padding: 20px;
+    min-height: 300px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .output-text {
+    border: 1px solid #ccc;
+    padding: 20px;
+    min-height: 300px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    line-height: 1.5;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .button-group {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  button {
+    padding: 8px 16px;
+    background-color: #4285f4;
+    color: white;
+    border: grey;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #3367d6;
+  }
+</style>
+
+<div class="container">
+  <div class="input-section">
+    <h2>Input</h2>
+    <div
+      class="input-area"
+      contenteditable="true"
+      placeholder="Enter your text here...">
+    </div>
+    <div class="button-group">
+      <button id="execute-btn">执行</button>
+      <button id="eva-btn">切换为评估agent</button>
+    </div>
+  </div>
+
+  <div class="output-section">
+    <h2>AI Agent Output</h2>
+    <div class="output-text">
+      The AI agent's response will appear here.
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('execute-btn').addEventListener('click', function() {
+  const inputArea = document.querySelector('.input-area');
+  const text = inputArea.innerText.trim();
+
+  const formData = new FormData();
+  if (text) {
+    formData.append('text', text);
+    formData.append('mode', "gen");
+  } else {
+    alert('请输入文本');
+    return;
+  }
+
+  fetch('/submit', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    // 拿到任务ID，下一步可轮询结果
+    pollResult(data.task_id); // 传给下一步
+  })
+  .catch(e => {
+    alert('请求失败: ' + e);
+  });
+});
+</script>
+
+<script>
+document.getElementById('eva-btn').addEventListener('click', function() {
+  window.location.href = '/eva';
+});
+</script>
+
+<script>
+function pollResult(taskId) {
+  const outputBox = document.querySelector('.output-text');
+  outputBox.textContent = "处理中，请稍候...";
+
+  function check() {
+    fetch(`/gen_result?task_id=${taskId}`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'pending') {
+          setTimeout(check, 2000);
+        } else {
+          const result = data.result;
+          if (!result) {
+            outputBox.textContent = '无返回结果';
+            return;
+          }
+
+          // 更新输出文本
+          const outputText = result.output_text || '无返回内容';
+          outputBox.innerHTML = outputText.replace(/\n/g, '<br>');
+        }
+      })
+      .catch(e => {
+        outputBox.textContent = "查询失败: " + e;
+      });
+  }
+
+  check();
+}
+
+</script>
+
+
+</body>
+</html>

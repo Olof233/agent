@@ -30,335 +30,54 @@
     display: flex;
     flex-direction: column;
   }
-  h2 {
+  button {
+    padding: 8px 16px;
+    background-color: #4285f4;
+    color: white;
+    border: grey;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  button:hover {
+    background-color: #3367d6;
+  }
+  .container h1 {
     color: #333;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-top: 0;
-  }
-  .input-area {
-    border: 1px solid #ccc;
-    padding: 10px;
-    min-height: 200px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-  }
-  .file-upload {
-    margin-bottom: 20px;
-  }
-  .sliders {
-    margin-bottom: 20px;
-  }
-  .slider-container {
-    margin-bottom: 15px;
-  }
-  .slider-container label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  input[type="range"] {
+    text-align: center;
     width: 100%;
-  }
-  .output-text {
-    border: 1px solid #ccc;
-    padding: 10px;
-    min-height: 200px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  .radar-chart-container {
-    width: 100%;
-    max-width: 500px;
-    margin: auto;
-  }
-  .weighted-score {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-top: 20px;
+    margin: 20px 0;
+    grid-column: span 2; /* 确保标题跨越两列 */
   }
 </style>
 </head>
 <body>
 
+
 <div class="container">
-  <div class="input-section">
-    <h2>Input</h2>
-    <div
-      class="input-area"
-      contenteditable="true"
-      placeholder="Enter your text here...">
-    </div>
-    <div style="display: flex; align-items: center;">
-      <div class="file-upload" style="margin-bottom: 20px;">
-        <label for="file">Upload a file:</label>
-        <input type="file" id="file" name="file">
-      </div>
-      <button id="execute-btn" style="margin-left: 16px; height: 36px;">执行</button>
-    </div>
-
-    <div class="sliders">
-      <h3>Adjust Dimension Weights</h3>
-      <div class="slider-container">
-        <label for="lang-slider">Language Correction</label>
-        <input type="range" id="lang-slider" min="0" max="10" value="5">
-      </div>
-      <div class="slider-container">
-        <label for="logic-slider">Logical Structure</label>
-        <input type="range" id="logic-slider" min="0" max="10" value="5">
-      </div>
-      <div class="slider-container">
-        <label for="info-slider">Information Value</label>
-        <input type="range" id="info-slider" min="0" max="10" value="5">
-      </div>
-      <div class="slider-container">
-        <label for="read-slider">Readability</label>
-        <input type="range" id="read-slider" min="0" max="10" value="5">
-      </div>
-      <div class="slider-container">
-        <label for="safety-slider">Content Safety</label>
-        <input type="range" id="safety-slider" min="0" max="10" value="5">
-      </div>
-      <div class="slider-container">
-        <label for="target-slider">Target Fit</label>
-        <input type="range" id="target-slider" min="0" max="10" value="5">
-      </div>
-    </div>
-  </div>
-
-  <div class="output-section">
-    <h2>AI Agent Output</h2>
-    <div class="output-text">
-      The AI agent's response will appear here.
-    </div>
-
-    <div class="radar-chart-container">
-        <canvas id="radarChart"></canvas>
-    </div>
-    <div class="weighted-score">
-      Weighted Score: <span id="weighted-score-value">0</span>
+  <h1>AI Agent Studio</h1>
+  <div class="input-section" style="grid-column: span 2; display: flex; justify-content: center; align-items: center;">
+    <div style="display: flex; gap: 16px;">
+      <button id="eva-btn" style="height: 36px;">内容评估agent</button>
+      <button id="gen-btn" style="height: 36px;">方案生成agent</button>
     </div>
   </div>
 </div>
 
 <script>
-  const radarChartCtx = document.getElementById('radarChart').getContext('2d');
-  const weightedScoreValue = document.getElementById('weighted-score-value');
-
-  const initialScores = [0, 0, 0, 0, 0, 0];
-  const labels = [
-    'Language Correction', 'Logical Structure', 'Information Value',
-    'Readability', 'Content Safety', 'Target Fit'
-  ];
-
-  const radarChart = new Chart(radarChartCtx, {
-    type: 'radar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Scores',
-        data: initialScores,
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        r: {
-          beginAtZero: true,
-          max: 10
-        }
-      }
-    }
-  });
-
-  const sliders = {
-    lang: document.getElementById('lang-slider'),
-    logic: document.getElementById('logic-slider'),
-    info: document.getElementById('info-slider'),
-    read: document.getElementById('read-slider'),
-    safety: document.getElementById('safety-slider'),
-    target: document.getElementById('target-slider')
-  };
-
-    function updateWeightedScore() {
-    const weights = {
-      lang: parseInt(sliders.lang.value),
-      logic: parseInt(sliders.logic.value),
-      info: parseInt(sliders.info.value),
-      read: parseInt(sliders.read.value),
-      safety: parseInt(sliders.safety.value),
-      target: parseInt(sliders.target.value)
-    };
-
-    const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-
-    const weightedScore = (
-      baseScores[0] * weights.lang +
-      baseScores[1] * weights.logic +
-      baseScores[2] * weights.info +
-      baseScores[3] * weights.read +
-      baseScores[4] * weights.safety +
-      baseScores[5] * weights.target
-    ) / totalWeight;
-
-    weightedScoreValue.textContent = weightedScore.toFixed(2);
-
-    radarChart.data.datasets[0].data = baseScores;
-    radarChart.update();
-  }
-
-  function updateChartAndScore() {
-    const scores = [
-      {{ langval }}, {{ logicval }},
-      {{ infoval }}, {{ readval }},
-      {{ safetyval }}, {{ targetval }}
-    ];
-
-    radarChart.data.datasets[0].data = scores;
-    radarChart.update();
-
-    const weights = {
-      lang: sliders.lang.value,
-      logic: sliders.logic.value,
-      info: sliders.info.value,
-      read: sliders.read.value,
-      safety: sliders.safety.value,
-      target: sliders.target.value
-    };
-
-    const weightedScore =
-      (scores[0] * weights.lang +
-      scores[1] * weights.logic +
-      scores[2] * weights.info +
-      scores[3] * weights.read +
-      scores[4] * weights.safety +
-      scores[5] * weights.target) /
-      Object.values(weights).reduce((a, b) => a + parseInt(b), 0);
-
-    weightedScoreValue.textContent = weightedScore.toFixed(2);
-  }
-
-  for (const slider of Object.values(sliders)) {
-    slider.addEventListener('input', updateWeightedScore);
-  }
-
-  // Initial calculation
-  updateChartAndScore();
-
+document.getElementById('eva-btn').addEventListener('click', function() {
+  window.location.href = '/eva';
+})
 </script>
 
 <script>
-document.getElementById('execute-btn').addEventListener('click', function() {
-  const inputArea = document.querySelector('.input-area');
-  const text = inputArea.innerText.trim();
-  const fileInput = document.getElementById('file');
-  const file = fileInput.files[0];
-
-  const formData = new FormData();
-  if (file) {
-    formData.append('file', file);
-  } else if (text) {
-    formData.append('text', text);
-  } else {
-    alert('请输入文本或选择文件');
-    return;
-  }
-
-  fetch('/submit', {
-    method: 'POST',
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    // 拿到任务ID，下一步可轮询结果
-    pollResult(data.task_id); // 传给下一步
-  })
-  .catch(e => {
-    alert('请求失败: ' + e);
-  });
-});
-</script>
-
-<script>
-// 计算加权得分
-  function updateWeightedScore() {
-    const weights = {
-      lang: parseInt(sliders.lang.value),
-      logic: parseInt(sliders.logic.value),
-      info: parseInt(sliders.info.value),
-      read: parseInt(sliders.read.value),
-      safety: parseInt(sliders.safety.value),
-      target: parseInt(sliders.target.value)
-    };
-
-    const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-
-    const weightedScore = (
-      baseScores[0] * weights.lang +
-      baseScores[1] * weights.logic +
-      baseScores[2] * weights.info +
-      baseScores[3] * weights.read +
-      baseScores[4] * weights.safety +
-      baseScores[5] * weights.target
-    ) / totalWeight;
-
-    weightedScoreValue.textContent = weightedScore.toFixed(2);
-
-    radarChart.data.datasets[0].data = baseScores;
-    radarChart.update();
-  }
-</script>
-
-<script>
-let baseScores = [0, 0, 0, 0, 0, 0];
-function pollResult(taskId) {
-  const outputBox = document.querySelector('.output-text');
-  outputBox.textContent = "处理中，请稍候...";
-
-  function check() {
-    fetch(`/result?task_id=${taskId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'pending') {
-          setTimeout(check, 2000);
-        } else {
-          const result = data.result;
-          if (!result) {
-            outputBox.textContent = '无返回结果';
-            return;
-          }
-
-          // 更新输出文本
-          const outputText = result.output_text || '无返回内容';
-          outputBox.innerHTML = outputText.replace(/\n/g, '<br>');
-
-          // 提取评分值
-          const scores = [
-            result.langval || 0,
-            result.logicval || 0,
-            result.infoval || 0,
-            result.readval || 0,
-            result.safetyval || 0,
-            result.targetval || 0
-          ];
-          
-          baseScores = scores;
-          // 更新雷达图
-          radarChart.data.datasets[0].data = scores;
-          radarChart.update();
-
-          updateWeightedScore();
-        }
-      })
-      .catch(e => {
-        outputBox.textContent = "查询失败: " + e;
-      });
-  }
-
-  check();
-}
-
+document.getElementById('gen-btn').addEventListener('click', function() {
+  window.location.href = '/gen';
+})
 </script>
 
 </body>

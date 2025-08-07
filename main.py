@@ -17,7 +17,7 @@ config = utils.read_yaml(path)
 model = utils.load_models_from_config(config)[0]
 # tool_definitions = tools.init_tools()
 
-def eva(content):
+def evaluate(content):
     conversations = []
     prompt={'role': 'system',
             'content': utils.prompt.eva_prompt}
@@ -36,7 +36,7 @@ def eva(content):
     conversations.append(new_content)
     return new_content['content']
 
-def gen(content):
+def generate(content):
     conversations = []
     prompt={'role': 'system',
             'content': utils.prompt.gen_prompt}
@@ -56,22 +56,34 @@ def gen(content):
     return new_content['content']
 
 
-@app.route('/')
+def get_content(i):
+    return contents[i]
+
+
+def background_process(task_id, mode):
+    func = evaluate if mode == "eva" else (generate if mode == "gen" else lambda x: None)
+    task_store[task_id] = {'status': 'done', 'result': func(get_content(task_id))}
+    return task_store[task_id]
+
+
+
+@app.route('/', methods=['GET'])
 def studio():
-    return render_template('ai_studio_code.html',
+    return render_template('ai_studio_code.html')
+
+
+@app.route('/eva', methods=['GET'])
+def eva():
+    return render_template('ai_studio_eva.html',
                            langval = 0, logicval = 0,
                            infoval = 0,  readval = 0,
                            safetyval = 0, targetval = 0
                            )
 
 
-def get_content(i):
-    return contents[i]
-
-
-def background_process(task_id):
-    task_store[task_id] = {'status': 'done', 'result': eva(get_content(task_id))}
-    return task_store[task_id]
+@app.route('/gen', methods=['GET'])
+def gen():
+    return render_template('ai_studio_gen.html')
 
 
 @app.route('/submit', methods=['POST'])
@@ -113,13 +125,13 @@ def submit():
     task_store[task_id] = {'status': 'pending', 'result': None}
     contents[task_id] = content
 
-    threading.Thread(target=background_process, args=(task_id,)).start()
+    threading.Thread(target=background_process, args=(task_id, request.form["mode"])).start()
 
     return jsonify({'task_id': task_id})
 
 
-@app.route('/result')
-def result():
+@app.route('/eva_result', methods=['GET'])
+def eva_result():
     task_id = request.args.get('task_id')
     task = task_store.get(task_id)
     if not task:
@@ -137,7 +149,7 @@ def result():
         longtext = ""
         for i in range(6):
             longtext += dim_list[i] + ': ' + str(resultlist['dimensions'][i]) + '\n'
-        longtext += "summary: " + str(resultlist['summary']) + '\n'
+        longtext += "总结: " + str(resultlist['summary']) + '\n'
         task['result'] = {
             "langval": resultlist['dimensions'][0]["评分"],
             "logicval": resultlist['dimensions'][1]["评分"],
@@ -148,6 +160,35 @@ def result():
             "output_text": longtext,
         }
     return jsonify(task)
+
+
+@app.route('/gen_result', methods=['GET'])
+def gen_result():
+    task_id = request.args.get('task_id')
+    task = task_store.get(task_id)
+    if not task:
+        return jsonify({'status': 'not_found', 'result': None})
+    if task["status"] != 'pending':
+        dim_list = [
+            "目标",
+            "核心方案",
+            "执行步骤",
+            "资源需求",
+            "风险与应对",
+            "预期效果"
+        ]
+        resultdict = json.loads(task['result'])
+        longtext = ""
+        dim = 0
+        for i in resultdict['dimensions'].keys():
+            longtext += dim_list[dim] + ': ' + str(resultdict['dimensions'][i].replace('\n', '')) + '\n'
+            dim += 1
+        longtext += "总结: " + str(resultdict['summary']) + '\n'
+        task['result'] = {
+            "output_text": longtext,
+        }
+    return jsonify(task)
+
 
 
 if __name__ == "__main__":
