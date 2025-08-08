@@ -38,22 +38,23 @@ def evaluate(content):
 
 def generate(content):
     conversations = []
-    prompt={'role': 'system',
-            'content': utils.prompt.gen_prompt}
-    messages={'role': 'user',
-            'content': content}
-    conversations.append(prompt)
-    conversations.append(messages)
+    contents = []
+    for dim in range (6):
+        prompt={'role': 'system',
+                'content': utils.prompt.gen_prompt[dim]}
+        messages={'role': 'user',
+                'content': content}
+        conversations.append(prompt)
+        conversations.append(messages) if dim == 0 else None
 
+        response, result = model.generate_messages(conversations[-(dim*2+2):], response_format=utils.format.gen_format[dim])
 
-    print(conversations[-2:])
-    response, result = model.generate_messages(conversations[-2:], response_format=utils.format.gen_format)
-
-    new_content = {
-        "role": "assistant",
-        "content": result.get("content", "None")}
-    conversations.append(new_content)
-    return new_content['content']
+        new_content = {
+            "role": "assistant",
+            "content": result.get("content", "None")}
+        contents.append(result.get("content", "None"))
+        conversations.append(new_content)
+    return contents
 
 
 def get_content(i):
@@ -177,13 +178,14 @@ def gen_result():
             "风险与应对",
             "预期效果"
         ]
-        resultdict = json.loads(task['result'])
+        print(task['result'])
+        resultlist = task['result']
         longtext = ""
         dim = 0
-        for i in resultdict['dimensions'].keys():
-            longtext += dim_list[dim] + ': ' + str(resultdict['dimensions'][i].replace('\n', '')) + '\n'
+        for i in resultlist:
+            longtext += dim_list[dim] + ': ' + str(i
+                .split(':"')[-1].rstrip('"}').replace('\n', '').replace('\n\n', '')) + '\n'
             dim += 1
-        longtext += "总结: " + str(resultdict['summary']) + '\n'
         task['result'] = {
             "output_text": longtext,
         }

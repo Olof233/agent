@@ -38,49 +38,140 @@ eva_format = {
     }
 
 
-gen_format = {
+gen_format = [
+    {
         "type": "json_schema",
         "json_schema": {
             "name": "generate_response",
             "schema": {
                 "type": "object",
                 "properties": {
-                    "dimensions": {
-                        "type": "object",
-                        "properties": {
-                            "目标": {
-                                "type": "string",
-                                "description": "Clearly define the problem to be solved or the goal to be achieved with the use of AI"
-                            },
-                            "核心方案": {
-                                "type": "string",
-                                "description": "Provide a succinct overview of the key strategies or solutions driven by AI"
-                            },
-                            "执行步骤": {
-                                "type": "string",
-                                "description": "Outline 3-5 main steps necessary to implement the proposal, including timelines or priorities"
-                            },
-                            "资源需求": {
-                                "type": "string",
-                                "description": "Identify the resources required, including personnel, technology, and financial support"
-                            },
-                            "风险与应对": {
-                                "type": "string",
-                                "description": "Recognize 1-2 major risks and suggest mitigation approaches"
-                            },
-                            "预期效果": {
-                                "type": "string",
-                                "description": "Briefly describe the anticipated outcomes of the proposal, with quantitative measures whenever possible"
-                            }
-                        },
-                        "required": ["目标", "核心方案", "执行步骤", "资源需求", "风险与应对", "预期效果"],
-                        "additionalProperties": False
+                    "目标": {
+                        "type": "string",
+                        "description": "Clearly define the problem to be solved or the goal to be achieved with the use of AI"
                     },
-                    "summary": {"type": "string"}
                 },
-                "required": ["dimensions", "summary"],
+                "required": ["目标"],
+                "additionalProperties": False
+            },
+            "strict": True
+        }
+    },
+    {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "generate_response",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "核心方案": {
+                        "type": "string",
+                        "description": "Provide a succinct overview of the key strategies or solutions driven by AI"
+                    },
+                },
+                "required": ["核心方案"],
+                "additionalProperties": False
+            },
+            "strict": True
+        }
+    },
+    {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "generate_response",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "执行步骤": {
+                        "type": "string",
+                        "description": "Outline 5-8 main steps necessary to implement the proposal, including timelines or priorities"
+                    },
+                },
+                "required": ["执行步骤"],
+                "additionalProperties": False
+            },
+            "strict": True
+        }
+    },
+    {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "generate_response",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "资源需求": {
+                        "type": "string",
+                        "description": "Identify the resources required, including personnel, technology, and financial support"
+                    },
+                },
+                "required": ["资源需求"],
+                "additionalProperties": False
+            },
+            "strict": True
+        }
+    },
+    {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "generate_response",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "风险与应对": {
+                        "type": "string",
+                        "description": "Recognize 2-3 major risks and suggest mitigation approaches"
+                    },
+                },
+                "required": ["风险与应对"],
+                "additionalProperties": False
+            },
+            "strict": True
+        }
+    },
+    {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "generate_response",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "预期效果": {
+                        "type": "string",
+                        "description": "Briefly describe the anticipated outcomes of the proposal, with quantitative measures whenever possible"
+                    }
+                },
+                "required": ["预期效果"],
                 "additionalProperties": False
             },
             "strict": True
         }
     }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+
+
+
